@@ -3,10 +3,12 @@ const app = express();
 app.use(express.json());
 const path = require('path');
 const Sequelize = require('sequelize');
-const conn = new Sequelize(process.env.DATABASE_URL);
+const conn = new Sequelize(process.env.DATABASE_URL || 'postgres://localhost/acme_login');
 
 app.use(require('express-session')({
-  secret: process.env.SECRET 
+  secret: process.env.SECRET || 'word',
+  resave: false,
+  saveUninitialized: true
 }));
 const port = process.env.PORT || 3000;
 app.listen(port, ()=> console.log(`listening on port ${port}`));
@@ -50,6 +52,7 @@ const users = {
 app.use('/dist', express.static(path.join(__dirname, 'dist')));
 
 app.post('/api/sessions', (req, res, next)=> {
+  console.log(req.body)
   const user = users[req.body.username];
   if(user){
     req.session.user = user;
@@ -59,9 +62,11 @@ app.post('/api/sessions', (req, res, next)=> {
 });
 
 app.get('/api/sessions', (req, res, next)=> {
-  const user = req.session.user; 
+  const user = req.session.user;
+  console.log('user', user)
   if(user){
-    return res.send(user);
+    console.log(user)
+    return res.json(user);
   }
   next({ status: 401 });
 });
