@@ -2,12 +2,37 @@ const express = require('express');
 const app = express();
 app.use(express.json());
 const path = require('path');
+const Sequelize = require('sequelize');
+const conn = new Sequelize(process.env.DATABASE_URL);
 
 app.use(require('express-session')({
   secret: process.env.SECRET 
 }));
 const port = process.env.PORT || 3000;
 app.listen(port, ()=> console.log(`listening on port ${port}`));
+
+const User = conn.define('user', {
+  email: Sequelize.STRING,
+  password: Sequelize.STRING
+});
+
+const syncAndSeed = async()=> {
+  await conn.sync({ force: true });
+
+  const [moeUser, lucyUser] = await
+    Promise.all([
+      User.create({
+        email: 'moe@grumpy.com',
+        password: 'hmph'
+      }),
+      User.create({
+        email: 'lucy@pleasant.com',
+        password: 'namaste'
+      })
+    ]);
+
+    const users = await User.findAll();
+};
 
 const users = {
   moe: {
