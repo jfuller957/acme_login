@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/jfuller957/acme_login#readme",
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-session": "^1.17.0",
     "pg": "^7.12.1",
     "sequelize": "^5.21.1"
